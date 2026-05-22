@@ -12,6 +12,18 @@
     </style>
     <script src="./games/sdk/v2"></script>
     <script>
+        // SDK sets window.visitorId="null" which causes dynamic import('./fingerprint2.min.js')
+        // to fail (wrong relative path), leaving YaGames.init() promise unresolved (black screen).
+        // Override with a stable local ID to skip fingerprint loading.
+        if (window.visitorId === "null") {
+            window.visitorId = "local_" + (localStorage.getItem("_vid") || (function() {
+                var id = Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2);
+                localStorage.setItem("_vid", id);
+                return id;
+            })());
+        }
+    </script>
+    <script>
         var consoling = console.log;
         window["isAdBlockActive"] = true;
 
